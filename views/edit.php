@@ -1,6 +1,6 @@
 <div class="container text-center">
     <div class="main-wrapper">
-        <div class="container-edit-task-form p-5 text-start">
+        <div class="container-edit-task-form text-start">
             <div class="title-form text-center">
                 <h2 class="my-3"> Editar tarea </h2>
             </div>

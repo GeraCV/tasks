@@ -1,5 +1,5 @@
 <div class="container text-center">
-    <div class="main-wrapper">
+    <div class="main-wrapper wrapper-task-list">
         <h1 class="my-3"> Lista de tareas </h1>
         <div class="text-end my-5">
             <button type="button" class="btn btn-primary">
