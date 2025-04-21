@@ -32,7 +32,8 @@ class Task
      */
     public function add()
     {
-
+        $this->setVariables(['pageTitle' => 'Añadir tarea', 'jsFile' => 'add-task']);
+        $this->buildHTML('add');
     }
 
     /**
@@ -93,6 +94,43 @@ class Task
         $this->response['message'] = 'La tarea se eliminó correctamente.';
 
         echo json_encode($this->response, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Validates the task to be added.
+     * Validations:
+     * 1 - If exists expected data.
+     * 2 - If the length expected data is valid.
+     *
+     * If the validations are correct, it calls the model function to add task.
+     */
+    public function addTask ()
+    {
+        if(!isset($_POST['nameTask'])) {
+            $this->sendError('Asegúrate de enviar los campos requeridos.');
+            exit();
+        }
+
+        $newTask = trim($_POST['nameTask']);
+
+        if(!strlen($newTask) || strlen($newTask) > 250) {
+            http_response_code(422);
+            $this->response['errors']['form'][] = ['name' => 'nameTask',
+                'message' => 'Asegúrate de ingresar al menos un caracter o no superar la cantidad máxima.'];
+            echo json_encode($this->response, JSON_PRETTY_PRINT);
+            exit();
+        }
+
+        $result = $this->model->addTask($newTask);
+
+        if(!$result) {
+            $this->sendError('Hubo un error al añadir la información');
+            exit();
+        }
+
+        $this->response['message'] = 'La información se añadió correctamente.';
+
+        echo json_encode($this->response,  JSON_PRETTY_PRINT);
     }
 
     /**

@@ -62,4 +62,20 @@ class Task
 
         return $queryResult;
     }
+
+    /**
+     * Add a new task to the task table.
+     */
+    public function addTask ($newTask)
+    {
+        $newTask = $this->database->escape($newTask);
+
+        $queryResult = $this->database->query("
+            INSERT INTO
+                tasks.task (task_name)
+            VALUES ('$newTask');
+        ");
+
+        return $queryResult;
+    }
 }
