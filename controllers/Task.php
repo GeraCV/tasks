@@ -41,7 +41,8 @@ class Task
      */
     public function edit()
     {
-
+        $this->setVariables(['pageTitle' => 'Editar tarea', 'jsFile' => 'edit-task']);
+        $this->buildHTML('edit');
     }
 
     /**
@@ -129,6 +130,66 @@ class Task
         }
 
         $this->response['message'] = 'La información se añadió correctamente.';
+
+        echo json_encode($this->response,  JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Calls the model function for get the task by Id.
+     */
+    public function getTask ()
+    {
+        try {
+            $taskId = isset($_POST['id']) ? intval($_POST['id']) : 0;
+            [$tasks, $rows] = $this->model->getTaskById($taskId);
+
+            if(!$rows) {
+                http_response_code(400);
+                $this->response['message'] = 'Tarea no encontrada.';
+            } else {
+                $this->response['data'] = $tasks[0];
+            }
+            echo json_encode ($this->response, JSON_PRETTY_PRINT);
+        } catch (\Exception $e) {
+            http_response_code(400);
+            $this->response['message'] = 'Hubo un error al solicitar la información.';
+            echo json_encode ($this->response, JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function editTask ()
+    {
+        if(!isset($_POST['nameTask']) || !isset($_POST['id'])) {
+            $this->sendError('Asegúrate de enviar los campos requeridos.');
+            exit();
+        }
+
+        $editTask = trim($_POST['nameTask']);
+        $taskId = trim($_POST['id']);
+
+        [$tasks, $rows] = $this->model->getTaskById($taskId);
+
+        if(!$rows) {
+            $this->sendError('Asegúrate de ingresar un Id válido.');
+            exit();
+        }
+
+        if(!strlen($editTask) || strlen($editTask) > 250) {
+            http_response_code(422);
+            $this->response['errors']['form'][] = ['name' => 'nameTask',
+                'message' => 'Asegúrate de ingresar al menos un caracter o no superar la cantidad máxima.'];
+            echo json_encode($this->response, JSON_PRETTY_PRINT);
+            exit();
+        }
+
+        $result = $this->model->updateTask($taskId, $editTask);
+
+        if(!$result) {
+            $this->sendError('Hubo un error al actualizar la información');
+            exit();
+        }
+
+        $this->response['message'] = 'La información se actualizó correctamente.';
 
         echo json_encode($this->response,  JSON_PRETTY_PRINT);
     }

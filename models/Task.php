@@ -78,4 +78,23 @@ class Task
 
         return $queryResult;
     }
+
+    /**
+     * Updates a task by Id in the task table.
+     */
+    public function updateTask ($id, $editTask)
+    {
+        $editTask = $this->database->escape($editTask);
+
+        $queryResult = $this->database->query("
+            UPDATE
+                tasks.task
+            set task_name = '$editTask'
+            WHERE
+                id = '$id';
+        ");
+
+        return $queryResult;
+    }
+
 }
