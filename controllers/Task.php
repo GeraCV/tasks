@@ -46,7 +46,7 @@ class Task
     }
 
     /**
-     * Calls the model function for get all tasks.
+     * Calls the model's function for get all tasks.
      */
     public function tasks ()
     {
@@ -68,7 +68,7 @@ class Task
      * 1 - It is a positive number.
      * 2 - Id exists in the task table.
      *
-     * If the validations are correct, it calls the model function to delete tasks.
+     * If the validations are correct, it calls the model's function to delete tasks.
      */
     public function deleteTask ()
     {
@@ -103,7 +103,7 @@ class Task
      * 1 - If exists expected data.
      * 2 - If the length expected data is valid.
      *
-     * If the validations are correct, it calls the model function to add task.
+     * If the validations are correct, it calls the model's function to add task.
      */
     public function addTask ()
     {
@@ -135,7 +135,7 @@ class Task
     }
 
     /**
-     * Calls the model function for get the task by Id.
+     * Calls the model's function for get the task by Id.
      */
     public function getTask ()
     {
@@ -167,10 +167,15 @@ class Task
         $editTask = trim($_POST['nameTask']);
         $taskId = trim($_POST['id']);
 
+        if(!preg_match('/^[0-9]+$/', $taskId)) {
+            $this->sendError('Asegúrate de ingresar in Id válido.');
+            exit();
+        }
+
         [$tasks, $rows] = $this->model->getTaskById($taskId);
 
         if(!$rows) {
-            $this->sendError('Asegúrate de ingresar un Id válido.');
+            $this->sendError('Tarea no encontrada.');
             exit();
         }
 
@@ -196,6 +201,7 @@ class Task
 
     /**
      * It is called when there are error validations of the user.
+     * @param string $message Error message.
      */
     public function sendError ($message = 'Hubo un error.')
     {
@@ -205,7 +211,8 @@ class Task
     }
 
     /**
-     * Builds the complete HTML view
+     * Builds the complete HTML view.
+     * @param string $message view name.
      */
     private function buildHTML (string $viewName)
     {
@@ -218,6 +225,7 @@ class Task
 
     /**
      * Creates array of variables for can use in the full page.
+     * @param array $arrayVariables Variables to use in the current controller, model or view.
      */
     private static function setVariables (array $arrayVariables)
     {

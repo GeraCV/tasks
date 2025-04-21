@@ -15,6 +15,7 @@ class Task
 
     /**
      * Gets all task from the database.
+     * @return array all tasks and number rows returned.
      */
     public function tasks ()
     {
@@ -33,6 +34,8 @@ class Task
 
     /**
      * Gets task by Id.
+     * @param int $tasksId Task Id.
+     * @return array Only one task and number rows returned.
      */
     public function getTaskById ($taskId)
     {
@@ -50,6 +53,8 @@ class Task
 
     /**
      * Delete task by Id.
+     * @param int $tasksId Task Id.
+     * @return int Affected rows.
      */
     public function deleteTask ($taskId)
     {
@@ -65,6 +70,8 @@ class Task
 
     /**
      * Add a new task to the task table.
+     * @param int $newTask Task name/description.
+     * @return int Affected rows.
      */
     public function addTask ($newTask)
     {
@@ -81,6 +88,9 @@ class Task
 
     /**
      * Updates a task by Id in the task table.
+     * @param int $tasksId Task Id.
+     * @param int $editTask Task name/description.
+     * @return int Affected rows.
      */
     public function updateTask ($id, $editTask)
     {
