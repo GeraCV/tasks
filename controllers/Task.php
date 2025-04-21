@@ -28,6 +28,22 @@ class Task
     }
 
     /**
+     * Creates add view.
+     */
+    public function add()
+    {
+
+    }
+
+    /**
+     * Creates edit view.
+     */
+    public function edit()
+    {
+
+    }
+
+    /**
      * Calls the model function for get all tasks.
      */
     public function tasks ()
@@ -45,19 +61,48 @@ class Task
     }
 
     /**
-     * Creates add view.
+     * Validates the task to be deleting.
+     * Validations:
+     * 1 - It is a positive number.
+     * 2 - Id exists in the task table.
+     *
+     * If the validations are correct, it calls the model function to delete tasks.
      */
-    public function add()
+    public function deleteTask ()
     {
+        $taskId = isset($_POST['taskId']) ? $_POST['taskId'] : null;
 
+        if(!preg_match('/^[0-9]+$/', $taskId)) {
+            $this->sendError('Asegúrate de ingresar in Id válido.');
+            exit();
+        }
+
+        [$tasks, $rows] = $this->model->getTaskById($taskId);
+
+        if(!$rows) {
+            $this->sendError('Tarea no encontrada.');
+            exit();
+        }
+
+        $result = $this->model->deleteTask($taskId);
+        if(!$result) {
+            $this->sendError('Hubo un error al eliminar la tarea, contacta al administrador.');
+            exit();
+        }
+
+        $this->response['message'] = 'La tarea se eliminó correctamente.';
+
+        echo json_encode($this->response, JSON_PRETTY_PRINT);
     }
 
     /**
-     * Creates edit view.
+     * It is called when there are error validations of the user.
      */
-    public function edit()
+    public function sendError ($message = 'Hubo un error.')
     {
-
+        http_response_code(400);
+        $this->response['message'] = $message;
+        echo json_encode($this->response, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -68,6 +113,7 @@ class Task
         extract(self::$data, 0);
         include $this->viewPath . 'templates/header.php';
         include $this->viewPath . $viewName . '.php';
+        include $this->viewPath . 'templates/resultModal.php';
         include $this->viewPath . 'templates/footer.php';
     }
 

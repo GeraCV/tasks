@@ -1,4 +1,12 @@
 const taskTableBody = $('.task-table-body')
+const taskNumber = $('.task-number')
+const deleteTaskBtn = $('#delete-task-btn')
+const deleteTaskModal = new bootstrap.Modal($('#delete-task-modal'), {
+    keyboard: false
+})
+const resultModal = new bootstrap.Modal(('#result-modal'), {
+    keyboard: false
+})
 
 /**
  * Gets all tasks and shows them in table, also adds a actions columns
@@ -9,13 +17,13 @@ const getAllTasks = () => {
         url: 'task/tasks',
         method: 'GET',
         dataType: 'json',
-        success: function(response, textStatus, xhr) {
+        complete: function(xhr, response) {
             const status = xhr.status
 
             taskTableBody.empty()
 
             if (status === 200) {
-                const data = response.data
+                const data = xhr.responseJSON.data
                 $.each(data, function(i, el) {
                     taskTableBody.append(`
                         <tr>
@@ -34,19 +42,75 @@ const getAllTasks = () => {
                                 </button>
                             </td>
                         </tr>
-                    `);
-                });
+                    `)
+                })
             } else if (status === 400) {
                 taskTableBody.append(`
                     <tr>
                         <td colspan="5">No se encontraron resultados.</td>
                     </tr>
-                `);
+                `)
             }
-        },
-        error: function(xhr) {
-            return
         }
-    });
-};
+    })
+}
+
 getAllTasks()
+
+/**
+ * Gets the action button clicked from the table and calls the required function.
+ */
+$('.task-table').on('click', '.remove', function() {
+    const currentElement = $(this)
+    showDeleteTaskModal(currentElement)
+})
+
+/**
+ * Shows modal to delete the selected information. After clicking 'Eliminar',
+ * performs the delete action and showing result message.
+ * @param {HTMLElement} element Table button clicked.
+ */
+const showDeleteTaskModal = (element) => {
+    const taskId = $(element).data('id')
+
+    taskNumber.text(taskId)
+    deleteTaskModal.show()
+
+    deleteTaskBtn.off('click').on('click', function () {
+        const form = new FormData()
+        form.append('taskId', taskId)
+
+        $.ajax({
+            url: 'task/deleteTask',
+            method: 'POST',
+            data: form,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            complete: function (xhr, textStatus) {
+
+                const status = xhr.status
+                const message = xhr.responseJSON.message
+
+                if (status === 200) {
+                    getAllTasks()
+                }
+
+                const icon = status === 200
+                    ? '<i class="fa-solid fa-circle-check mb-3 h1 text-success mb-4"></i>'
+                    : '<i class="fa-solid fa-triangle-exclamation mb-3 h1 text-warning"></i>'
+
+                const modalBody = $('#result-modal .modal-body')
+                modalBody.html(`
+                    <div class="my-3 text-center">
+                        ${icon}
+                        <p class="mb-0">${message}</p>
+                    </div>
+                `);
+
+                deleteTaskModal.hide()
+                resultModal.show()
+            }
+        })
+    })
+}

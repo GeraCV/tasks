@@ -30,4 +30,36 @@ class Task
 
         return $queryResult;
     }
+
+    /**
+     * Gets task by Id.
+     */
+    public function getTaskById ($taskId)
+    {
+        $queryResult = $this->database->query("
+            SELECT
+                *
+            FROM
+                tasks.task
+
+            WHERE id = '$taskId';
+        ");
+
+        return $queryResult;
+    }
+
+    /**
+     * Delete task by Id.
+     */
+    public function deleteTask ($taskId)
+    {
+        $queryResult = $this->database->query("
+            DELETE FROM
+                tasks.task
+            WHERE
+                id = '$taskId';
+        ");
+
+        return $queryResult;
+    }
 }

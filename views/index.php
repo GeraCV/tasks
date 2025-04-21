@@ -23,3 +23,23 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="delete-task-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar tarea</h5>
+            </div>
+            <div class="modal-body my-3 text-center">
+                <i class="fa-solid fa-xmark h1 text-danger"></i>
+                <p class="mb-0">
+                    ¿Estás seguro que deseas eliminar la tarea <span class="task-number"></span>?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="delete-task-btn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
